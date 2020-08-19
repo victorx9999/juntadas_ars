@@ -5,7 +5,7 @@ module.exports = (sequelize, DataTypes) => {
         numero_processo: DataTypes.STRING,
         destinatario: DataTypes.STRING,
         data: DataTypes.STRING,
-        status: DataTypes.BOOLEAN,
+        status: DataTypes.ENUM('Upado', 'Nao Upado'),
         status_bot: DataTypes.STRING,
         usuario_id: DataTypes.INTEGER,
     }, {

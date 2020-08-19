@@ -24,6 +24,7 @@ export default {
           res.status(200).json({ success: true, correspondencia: response });
         })
         .catch((error) => {
+          console.log(error)
           res.status(400).json({
             success: false,
             message: "Ocorreu um erro enquanto os dados eram inseridos.",

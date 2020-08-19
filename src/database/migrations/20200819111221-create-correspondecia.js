@@ -20,7 +20,6 @@ module.exports = {
         type: Sequelize.STRING
       },
 
-
       data: {
         allowNull: false,
         type: Sequelize.STRING,
@@ -29,14 +28,15 @@ module.exports = {
 
       status: {
         allowNull: false,
-        type: Sequelize.BOOLEAN,
-        unique: false
+        type: Sequelize.ENUM('Upado', 'Nao Upado'),
+        defaultValue: 'Nao Upado'
       },
 
       status_bot: {
         allowNull: false,
         type: Sequelize.STRING,
-        unique: false
+        unique: false,
+        defaultValue: 'Ainda nao houve tentativa'
       },
 
       usuario_id: {
