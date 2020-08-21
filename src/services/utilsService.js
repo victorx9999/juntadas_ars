@@ -13,11 +13,12 @@ export default {
     },
 
     formatUploadPath: (filename) => {
-        return path.format({ dir: 'uploads', name: filename, ext: '.pdf' })
+        const currentYear = new Date().getFullYear().toString()
+        return path.format({ root: 'uploads/' + currentYear + '/', name: filename, ext: '.pdf' })
     },
 
     formatDownloadPath: (artigo) => {
-        return path.format({ name: artigo.arquivo, ext: '.pdf' })
+        return path.format({ root: artigo.created_at.getFullYear() + '/', name: artigo.arquivo, ext: '.pdf' })
     }
 
 }

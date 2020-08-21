@@ -1,5 +1,5 @@
 import ldap from 'ldapjs'
-import { Setor, SetorTipo, Usuario, UsuarioPapel } from '../database/models'
+import { Usuario, Setor, UsuarioPapel } from '../database/models'
 
 
 const dominio = '@jfpb.jus.br'
@@ -12,11 +12,7 @@ const getUser = (req, res, next) => {
             as: 'papel'
         }, {
             model: Setor,
-            as: 'setor', 
-            include: [{ 
-                model: SetorTipo,
-                as: 'tipo'
-            }]
+            as: 'setor',
         }]
     }).then(usuario => {
         if (usuario === undefined) {
@@ -42,7 +38,7 @@ const autenticarLdap = (req, res, next) => {
         url: 'ldap://adjpa00.jfpb.jus.br:389'
     })
 
-    client.bind(`${req.body.username}` + dominio, req.body.password, function (err) {
+    client.bind(`${req.body.username}` + dominio, req.body.senha, function (err) {
         if (err) {
             return res.status(400).send({ message: 'O usuário não está cadastrado no LDAP.' })
         } else {

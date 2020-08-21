@@ -1,5 +1,5 @@
 FROM node:12.16-alpine
-WORKDIR /usr/src/livro
+WORKDIR /usr/src/portarias
 COPY package*.json ./
 RUN npm install --silent --only=production
 COPY . .

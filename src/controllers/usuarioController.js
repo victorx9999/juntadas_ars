@@ -1,5 +1,4 @@
-import { Op } from 'sequelize'
-import { Usuario, Setor } from '../database/models'
+import { Usuario, Setor, UsuarioPapel } from '../database/models'
 import tokenService from '../services/tokenService'
 
 export default {
@@ -7,15 +6,17 @@ export default {
     add: (req, res, next) => {
         try {
             Usuario.create(req.body).then(response => {
-                res.status(200).json({ success: true, usuario: response })
+                res.status(201).json({ success: true, usuario: response })
             }).catch(error => {
                 res.status(400).json({
+                    error: error,
                     success: false,
                     message: 'Ocorreu um erro enquanto os dados eram inseridos.'
                 })
             })
         } catch (error) {
             res.status(500).json({
+                error: error,
                 success: false,
                 message: 'Ocorreu um erro desconhecido com o sistema.'
             })
@@ -25,25 +26,27 @@ export default {
 
     update: (req, res, next) => {
         try {
-            Usuario.update(req.body, { where: { id: req.params.id } }).then(response => {
-                Usuario.findOne({ where: { id: req.params.id } }).then(response => {
-                    if (response) {
+            Usuario.findOne({ where: { id: req.params.id } }).then(usuario => {
+                if(usuario){
+                    return usuario.update(req.body).then(response => {
                         res.status(200).json({ success: true, usuario: response })
-                    } else {
-                        res.status(404).json({
-                            success: false,
-                            message: 'O registro solicitado não foi encontrado no sistema.'
-                        })
-                    }
-                })
+                    })
+                } else {
+                    res.status(404).json({
+                        success: false,
+                        message: 'O registro solicitado não foi encontrado no sistema.'
+                    })
+                }
             }).catch(error => {
-                res.status(400).json({
-                    success: false,
+                res.status(400).json({ 
+                    error: error,
+                    success: false, 
                     message: 'Ocorreu um erro enquanto os dados eram atualizados.'
                 })
             })
         } catch (error) {
             res.status(500).json({
+                error: error,
                 success: false,
                 message: 'Ocorreu um erro desconhecido com o sistema.'
             })
@@ -55,22 +58,31 @@ export default {
         try {
             Usuario.findAll({
                 attributes: {
-                    exclude: ['setorId']
+                    exclude: ['setorId', 'papelId']
                 },
-                include: [{
-                    model: Setor,
-                    as: 'setor'
-                }]
+                include: [
+                    {
+                        model: Setor,
+                        as: 'setor'
+                    },
+                    {
+                        model: UsuarioPapel,
+                        as: 'papel'
+                    }
+                ],
+                order: ['nome']
             }).then((response) => {
                 res.status(200).json({ success: true, usuarios: response })
             }).catch((error) => {
                 res.status(400).json({
+                    error: error,
                     success: false,
                     message: 'Ocorreu um erro enquanto os dados eram recuperados.'
                 })
             })
         } catch (error) {
             res.status(500).json({
+                error: error,
                 success: false,
                 message: 'Ocorreu um erro desconhecido com o sistema.'
             })
@@ -91,12 +103,14 @@ export default {
                 }
             }).catch((error) => {
                 res.status(400).json({
+                    error: error,
                     success: false,
                     message: 'Ocorreu um erro enquanto o dado era recuperado.'
                 })
             })
         } catch (error) {
             res.status(500).json({
+                error: error,
                 success: false,
                 message: 'Ocorreu um erro desconhecido com o sistema.'
             })
@@ -110,12 +124,44 @@ export default {
                 res.status(200).json({ success: true, usuarios: response })
             }).catch((error) => {
                 res.status(400).json({
+                    error: error,
                     success: false,
                     message: 'Ocorreu um erro enquanto os dados eram recuperados.'
                 })
             })
         } catch (error) {
             res.status(500).json({
+                error: error,
+                success: false,
+                message: 'Ocorreu um erro desconhecido com o sistema.'
+            })
+            next(error)
+        }
+    },
+
+    activate: (req, res, next) => {
+        try {
+            Usuario.findOne({ where: { id: req.params.id } }).then(usuario => {
+                if(usuario) {
+                    return usuario.update({ ativo: true }).then(response => {
+                        res.status(200).json({ success: true, usuario: response })
+                    })
+                } else {
+                    res.status(404).json({
+                        success: false,
+                        message: 'O registro solicitado não foi encontrado no sistema.'
+                    })
+                }
+            }).catch(error => {
+                res.status(400).json({ 
+                    error: error,
+                    success: false, 
+                    message: 'Ocorreu um erro enquanto os dados eram atualizados.'
+                })
+            })
+        } catch (error) {
+            res.status(500).json({
+                error: error,
                 success: false,
                 message: 'Ocorreu um erro desconhecido com o sistema.'
             })
@@ -125,54 +171,27 @@ export default {
 
     deactivate: (req, res, next) => {
         try {
-            Usuario.update({ ativo: false }, { where: { id: req.params.id } }).then(response => {
-                Usuario.findOne({ where: { id: req.params.id } }).then(response => {
-                    if (response) {
+            Usuario.findOne({ where: { id: req.params.id } }).then(usuario => {
+                if(usuario) {
+                    return usuario.update({ ativo: false }).then(response => {
                         res.status(200).json({ success: true, usuario: response })
-                    } else {
-                        res.status(404).json({
-                            success: false,
-                            message: 'O registro solicitado não foi encontrado no sistema.'
-                        })
-                    }
-                })
+                    })
+                } else {
+                    res.status(404).json({
+                        success: false,
+                        message: 'O registro solicitado não foi encontrado no sistema.'
+                    })
+                }
             }).catch(error => {
-                res.status(400).json({
-                    success: false,
+                res.status(400).json({ 
+                    error: error,
+                    success: false, 
                     message: 'Ocorreu um erro enquanto os dados eram atualizados.'
                 })
             })
         } catch (error) {
             res.status(500).json({
-                success: false,
-                message: 'Ocorreu um erro desconhecido com o sistema.'
-            })
-
-            next(error)
-        }
-    },
-
-    activate: (req, res, next) => {
-        try {
-            Usuario.update({ ativo: true }, { where: { id: req.params.id } }).then(response => {
-                Usuario.findOne({ where: { id: req.params.id } }).then(response => {
-                    if (response) {
-                        res.status(200).json({ success: true, usuario: response })
-                    } else {
-                        res.status(404).json({
-                            success: false,
-                            message: 'O registro solicitado não foi encontrado no sistema.'
-                        })
-                    }
-                })
-            }).catch(error => {
-                res.status(400).json({
-                    success: false,
-                    message: 'Ocorreu um erro enquanto os dados eram atualizados.'
-                })
-            })
-        } catch (error) {
-            res.status(500).json({
+                error: error,
                 success: false,
                 message: 'Ocorreu um erro desconhecido com o sistema.'
             })
@@ -182,29 +201,21 @@ export default {
 
     listUsuarioByPapel: (req, res, next) => {
         try {
-            Usuario.findAll({ 
-                where: { usuarioPapelId: req.params.id },
-                attributes: {
-                    exclude: ['setorId']
-                },
-                include: [{
-                    model: Setor,
-                    as: 'setor'
-                }]
-            }).then((response) => {
+            Usuario.findAll({ where: { papel_id: req.params.id } }).then((response) => {
                 res.status(200).json({ success: true, usuarios: response })
             }).catch((error) => {
                 res.status(400).json({
+                    error: error,
                     success: false,
                     message: 'Ocorreu um erro enquanto os dados eram recuperados.'
                 })
             })
         } catch (error) {
             res.status(500).json({
+                error: error,
                 success: false,
                 message: 'Ocorreu um erro desconhecido com o sistema.'
             })
-
             next(error)
         }
     },
@@ -212,24 +223,34 @@ export default {
     listUsuarioBySetor: (req, res, next) => {
         try {
             Usuario.findAll({ 
-                where: { setorId: req.params.id },
-                attributes: {
-                    exclude: ['setorId']
+                where: { 
+                    setor_id: req.params.id 
                 },
-                include: [{
-                    model: Setor,
-                    as: 'setor'
-                }]
+                attributes: {
+                    exclude: ['setor_id', 'papel_id']
+                },
+                include: [
+                    {
+                        model: Setor,
+                        as: 'setor'
+                    },
+                    {
+                        model: UsuarioPapel,
+                        as: 'papel'
+                    }
+                ] 
             }).then((response) => {
                 res.status(200).json({ success: true, usuarios: response })
             }).catch((error) => {
                 res.status(400).json({
+                    error: error,
                     success: false,
                     message: 'Ocorreu um erro enquanto os dados eram recuperados.'
                 })
             })
         } catch (error) {
             res.status(500).json({
+                error: error,
                 success: false,
                 message: 'Ocorreu um erro desconhecido com o sistema.'
             })

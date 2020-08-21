@@ -3,7 +3,6 @@
 module.exports = (sequelize, DataTypes) => {
     const Anexo = sequelize.define('Anexo', {
         arquivo: DataTypes.STRING,
-        observacoes: DataTypes.TEXT,
         correspondencia_id: DataTypes.INTEGER
     }, {
         freezeTableName: true,

@@ -1,18 +1,18 @@
 version: '3'
 
 services:
-    livro-db:
+    portarias-db:
        image: mysql:5.7
-       container_name: livro-db
+       container_name: portarias-db
        ports:
            - "3306:3306"
        volumes:
-          - "livro_data:/var/lib/mysql"
+          - "portarias_data:/var/lib/mysql"
        environment:
-          MYSQL_DATABASE: livro_carga
+          MYSQL_DATABASE: portarias
           ALLOW_EMPTY_PASSWORD: "yes"
           MYSQL_ROOT_PASSWORD: password
   
 volumes:
-  livro_data:
-    external: true
+    portarias_data:
+        external: true

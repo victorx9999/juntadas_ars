@@ -2,6 +2,10 @@ import { Op } from "sequelize";
 import { Correspondencia } from "../database/models";
 import { Usuario } from "../database/models"
 import { Anexo } from "../database/models"
+import path from 'path'
+import utilsService from '../services/utilsService'
+import tokenService from '../services/tokenService'
+
 
 const storeFile = (file) => {
   return new Promise((resolve, reject) => {
@@ -143,13 +147,13 @@ export default {
 
   upload: (req, res, next) => {
     try {
-      Correspondencia.findOne({ where: { id: req.params.id } }).then(Correspondencia => {
-        if (Correspondencia && req.files && 'anexo' in req.files && req.files.anexo.name.endsWith('.pdf')) {
+      Correspondencia.findOne({ where: { id: req.params.id } }).then(correspondencia => {
+        if (correspondencia && req.files && 'anexo' in req.files && req.files.anexo.name.endsWith('.pdf')) {
           storeFile(req.files.anexo).then(anexo => {
             Anexo.create({
               arquivo: anexo.arquivo,
-              observacoes: req.body.observacoes,
-              CorrespondenciaId: req.params.id
+            //   observacoes: req.body.observacoes,
+              correspondencia_id: req.params.id
             }).then(anexo => {
               res.status(200).json({ success: true, anexo })
             }).catch(error => {
@@ -161,6 +165,7 @@ export default {
               })
             })
           }).catch(error => {
+            console.log(error)
             res.status(500).json({
               error: error,
               success: false,
@@ -168,12 +173,14 @@ export default {
             })
           })
         } else {
+          console.log(error)
           res.status(400).json({
             success: false,
             message: 'Ocorreu um erro enquanto o arquivo era salvo.'
           })
         }
       }).catch((error) => {
+        console.log(error)
         res.status(400).json({
           error: error,
           success: false,
@@ -181,6 +188,7 @@ export default {
         })
       })
     } catch (error) {
+      console.log(error)
       res.status(500).json({
         success: false,
         message: 'Ocorreu um erro desconhecido com o sistema.'

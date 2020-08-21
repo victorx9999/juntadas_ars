@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
 
     Correspondencia.associate = function (models) {
 
-        Correspondencia.belongsTo(models.Usuario, { as: 'usuarios', foreignKey: 'usuario_id' })
+        Correspondencia.belongsTo(models.Usuario, { as: 'usuario', foreignKey: 'usuario_id' })
         Correspondencia.hasMany(models.Anexo, {as: 'anexo', foreignKey: 'correspondencia_id'})
 
     };

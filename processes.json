@@ -1,5 +1,5 @@
 {
-    "name": "livro_carga",
+    "name": "jfpb_portarias",
     "script": "dist/index.js",
     "merge_logs": true,
     "max_restarts": 20,

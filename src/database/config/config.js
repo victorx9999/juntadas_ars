@@ -22,7 +22,7 @@ module.exports = {
         "username": "root",
         "password": "admin",
         "database": "database_test",
-        "host": "localhost",
+        "host": "127.0.0.1",
         "dialect": "mysql",
         "operatorsAliases": 0
     },

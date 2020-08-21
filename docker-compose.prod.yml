@@ -1,15 +1,15 @@
 version: "3"
 
 services:
-    livro-back:
+    portarias-back:
         build: .
-        image: livro-back
-        container_name: livro-back
+        image: portarias-back
+        container_name: portarias-back
         depends_on:
-            - livro-db
+            - portarias-db
         command: sh -c "npm run migrate && npm run production"
         volumes:
-            - "./livro/uploads:/usr/src/livro/uploads"
+            - "./portarias/uploads:/usr/src/portarias/uploads"
         environment:
             DB_HOST: ${DB_HOST}
             DB_SCHEMA: ${DB_SCHEMA}
@@ -20,14 +20,14 @@ services:
             - "3000:3000"
         restart: on-failure
                 
-    livro-db:
+    portarias-db:
         image: mysql:5.7
-        container_name: livro-db
+        container_name: portarias-db
         depends_on:
-            - livro-adminer
+            - portarias-adminer
         command: "--innodb_use_native_aio=0"
         volumes:
-             - "./livro/database:/var/lib/mysql"
+             - "./portarias/database:/var/lib/mysql"
         environment:
             MYSQL_DATABASE: ${DB_SCHEMA}
             ALLOW_EMPTY_PASSWORD: "yes"
@@ -36,9 +36,9 @@ services:
             - "3306:3306"
         restart: on-failure
                     
-    livro-adminer:
+    portarias-adminer:
         image: adminer:4.7
-        container_name: livro-adminer
+        container_name: portarias-adminer
         restart: always
         ports:
             - "6542:8080"

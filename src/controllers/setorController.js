@@ -6,19 +6,43 @@ export default {
     add: (req, res, next) => {
         try {
             Setor.create(req.body).then(response => {
-                res.status(200).json({ success: true, setor: response })
+                res.status(201).json({ success: true, setor: response })
             }).catch(error => {
                 res.status(400).json({
+                    error: error,
                     success: false,
                     message: 'Ocorreu um erro enquanto os dados eram inseridos.'
                 })
             })
         } catch (error) {
             res.status(500).json({
+                error: error,
                 success: false,
                 message: 'Ocorreu um erro desconhecido com o sistema.'
             })
+            next(error)
+        }
+    },
 
+    update: (req, res, next) => {
+        try {
+            Setor.findOne({ where: { id: req.params.id } }).then(setor => {
+                return setor.update(req.body).then(response => {
+                    res.status(200).json({ success: true, setor: response })
+                })
+            }).catch(error => {
+                res.status(400).json({
+                    error: error,
+                    success: false,
+                    message: 'Ocorreu um erro enquanto os dados eram atualizados.'
+                })
+            })
+        } catch (error) {
+            res.status(500).json({
+                error: error,
+                success: false,
+                message: 'Ocorreu um erro desconhecido com o sistema.'
+            })
             next(error)
         }
     },
@@ -29,12 +53,14 @@ export default {
                 res.status(200).json({ success: true, setores: response })
             }).catch((error) => {
                 res.status(400).json({
+                    error: error,
                     success: false,
                     message: 'Ocorreu um erro enquanto os dados eram recuperados.'
                 })
             })
         } catch (error) {
             res.status(500).json({
+                error: error,
                 success: false,
                 message: 'Ocorreu um erro desconhecido com o sistema.'
             })
@@ -46,51 +72,40 @@ export default {
     findById: (req, res, next) => {
         try {
             Setor.findOne({ where: { id: req.params.id } }).then((response) => {
-                if (response) {
-                    res.status(200).json({ success: true, setor: response })
-                } else {
-                    res.status(404).json({
-                        success: false,
-                        message: 'O registro solicitado não foi encontrado no sistema.'
-                    })
-                }
+                res.status(200).json({ success: true, setor: response })
             }).catch((error) => {
                 res.status(400).json({
+                    error: error,
                     success: false,
                     message: 'Ocorreu um erro enquanto o dado era recuperado.'
                 })
             })
         } catch (error) {
             res.status(500).json({
+                error: error,
                 success: false,
                 message: 'Ocorreu um erro desconhecido com o sistema.'
             })
-
             next(error)
         }
     },
 
     activate: (req, res, next) => {
         try {
-            Setor.update({ ativo: true }, { where: { id: req.params.id } }).then(response => {
-                Setor.findOne({  where: { id: req.params.id } }).then(response => {
-                    if (response) {
-                        res.status(200).json({ success: true, setor: response })
-                    } else {
-                        res.status(404).json({
-                            success: false,
-                            message: 'O registro solicitado não foi encontrado no sistema.'
-                        })
-                    }
+            Setor.findOne({ where: { id: req.params.id } }).then(setor => {
+                return setor.update({ ativo: true }).then(response => {
+                    res.status(200).json({ success: true, setor: response })
                 })
             }).catch(error => {
                 res.status(400).json({
+                    error: error,
                     success: false,
                     message: 'Ocorreu um erro enquanto os dados eram atualizados.'
                 })
             })
         } catch (error) {
             res.status(500).json({
+                error: error,
                 success: false,
                 message: 'Ocorreu um erro desconhecido com o sistema.'
             })
@@ -100,25 +115,20 @@ export default {
 
     deactivate: (req, res, next) => {
         try {
-            Setor.update({ ativo: false }, { where: { id: req.params.id } }).then(response => {
-                Setor.findOne({ where: { id: req.params.id } }).then(response => {
-                    if (response) {
-                        res.status(200).json({ success: true, setor: response })
-                    } else {
-                        res.status(404).json({
-                            success: false,
-                            message: 'O registro solicitado não foi encontrado no sistema.'
-                        })
-                    }
+            Setor.findOne({ where: { id: req.params.id } }).then(setor => {
+                return setor.update({ ativo: false }).then(response => {
+                    res.status(200).json({ success: true, setor: response })
                 })
             }).catch(error => {
                 res.status(400).json({
+                    error: error,
                     success: false,
                     message: 'Ocorreu um erro enquanto os dados eram atualizados.'
                 })
             })
         } catch (error) {
             res.status(500).json({
+                error: error,
                 success: false,
                 message: 'Ocorreu um erro desconhecido com o sistema.'
             })
@@ -129,51 +139,17 @@ export default {
     listActive: (req, res, next) => {
         try {
             Setor.findAll({ where: { ativo: true } }).then((response) => {
-                if (response) {
-                    res.status(200).json({ success: true, setores: response })
-                } else {
-                    res.status(404).json({
-                        success: false,
-                        message: 'O registro solicitado não foi encontrado no sistema.'
-                    })
-                }
+                res.status(200).json({ success: true, setores: response })
             }).catch((error) => {
                 res.status(400).json({
+                    error: error,
                     success: false,
                     message: 'Ocorreu um erro enquanto o dado era recuperado.'
                 })
             })
         } catch (error) {
             res.status(500).json({
-                success: false,
-                message: 'Ocorreu um erro desconhecido com o sistema.'
-            })
-
-            next(error)
-        }
-    },
-
-    update: (req, res, next) => {
-        try {
-            Setor.update(req.body, { where: { id: req.params.id } }).then(response => {
-                Setor.findOne({ where: { id: req.params.id } }).then(response => {
-                    if (response) {
-                        res.status(200).json({ success: true, setor: response })
-                    } else {
-                        res.status(404).json({
-                            success: false,
-                            message: 'O registro solicitado não foi encontrado no sistema.'
-                        })
-                    }
-                })
-            }).catch(error => {
-                res.status(400).json({
-                    success: false,
-                    message: 'Ocorreu um erro enquanto os dados eram atualizados.'
-                })
-            })
-        } catch (error) {
-            res.status(500).json({
+                error: error,
                 success: false,
                 message: 'Ocorreu um erro desconhecido com o sistema.'
             })
